@@ -18,8 +18,10 @@ pip install -r requirements.txt
 
 # Run script
 python example_service.py
+
+## The script runs for approximately 6 seconds, to run 3 randomized dummy tasks
 ```
-Example an OTel Event fired by this 
+Example of an OTel Event fired by this script
 
 ```json
 {
@@ -93,12 +95,12 @@ Example of an uncaught exception OTel Event, created by adding a typo
 
 ```
 
-To run this in production in an EKS cluster, the following changes are required to the OTelService class
+To run OTel logging hanlders in production in an EKS cluster, the following changes are required to the OTelService class in `example_service.py`
 
 ```
 1) Replace ConsoleLogExporter with OTLPLogExporter.
 
-2) Point the endpoint to your collector: endpoint="http://otel-collector:4317".
+2) Point the endpoint to your collector: e.g endpoint="http://otel-collector:4317".
 ```
 
 To add a specific log file to the OTel Collector, the OTel Collector should run as a Daemonset (in the context of EKS). This makes one OTel Collector service run on each node. Make all services mount their log files to a specific file on the host node. After that, use the following ConfigMap to specific the log files which the OTel Collector should monitor and forward.
