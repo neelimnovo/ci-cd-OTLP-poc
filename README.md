@@ -1,7 +1,9 @@
 # remarcable-takehome-poc
-Proof-of-Concept OpenTelemetry Logging Setup
+This is a proof-of-concept project that demonstrates two things
+* A dummy python service that logs using OpenTelemetry Protocol (OTLP) to show the structure and content of the logged data.
+* Running a CI/CD pipeline where a CI test is run after every commit to the `main` branch. If the CI test passed, the a CD job is run which deploys a website to Github Pages.
 
-Requirements to Run
+Requirements to run the service locally
 - Python 3.10+
 
 Steps to Run
@@ -11,13 +13,10 @@ pip install -r requirements.txt
 
 # Run script
 python example_service.py
-
-# End script execution with Ctrl+C
-
 ```
 Example OTel Event fired by this 
 
-```
+```json
 {
     "body": "Task 9032 successful",
     "severity_number": 9,
@@ -25,7 +24,7 @@ Example OTel Event fired by this
     "attributes": {
         "task.id": 9032,
         "status": "done",
-        "code.file.path": "/Users/neelimnovo/projects/remarcable-takehome-poc/test_service.py",
+        "code.file.path": "<LOCAL_PROJECT_PATH>/remarcable-takehome-poc/test_service.py",
         "code.function.name": "perform_task",
         "code.line.number": 47
     },
@@ -50,15 +49,15 @@ Example OTel Event fired by this
 }
 ```
 
-Example of uncaught exception OTel Event
+Example of uncaught exception OTel Event, created by adding a typos
 
-```
+```json
 {
     "body": "Uncaught exception",
     "severity_number": 17,
     "severity_text": "ERROR",
     "attributes": {
-        "code.file.path": "/Users/neelimnovo/projects/remarcable-takehome-poc/example_service.py",
+        "code.file.path": "<LOCAL_PROJECT_PATH>/remarcable-takehome-poc/example_service.py",
         "code.function.name": "handle_exception",
         "code.line.number": 28,
         "exception.type": "AttributeError",
@@ -84,6 +83,9 @@ Example of uncaught exception OTel Event
     },
     "event_name": ""
 }
+
+
+
 ```
 
 To run this in production in an EKS cluster, the following changes are required to the OTelService class
@@ -94,9 +96,11 @@ To run this in production in an EKS cluster, the following changes are required 
 2) Point the endpoint to your collector: endpoint="http://otel-collector:4317".
 ```
 
-To add a specific log file to the OTel Collector, the OTel Collector should run as a Daemonset (in the context of EKS). This makes one OTel Collector service run on each node. Make all services mount their log files to a specific file on the host node. After that, use the following ConfigMap to specific the log files which the OTel Collector should monitor and forward
+To add a specific log file to the OTel Collector, the OTel Collector should run as a Daemonset (in the context of EKS). This makes one OTel Collector service run on each node. Make all services mount their log files to a specific file on the host node. After that, use the following ConfigMap to specific the log files which the OTel Collector should monitor and forward.
 
-```
+The recommened OTel Collector for EKS is AWS Distro for OpenTelemetry (ADOT). More details on ADOT documentation [here](https://github.com/aws-observability/aws-otel-collector), which supports Datadog as a backend to forward the OTel events to.
+
+```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -125,7 +129,9 @@ data:
           exporters: [otlp]
 ```
 
-Prompts
+This was made mostly using the Antigravity IDE, using the Gemini 3.1 Pro and Flash models, with some minor editing to the code.
+
+Main list of prompts used:
 
 ```
 Generate code for a sample, dummy python service that performs its logging in an OpenTelemetry supported way. Give me details of how to launch this service to have this logging setup, and if I can test this locally
@@ -143,4 +149,11 @@ Make a plan to create a dummy, proof-of-concept Github CI/CD pipeline using Gith
 * If the dummy CI test passes, run a dummy CD job
 * The CD job can do something as simple as deploy a template website to a github pages website. It should try to do something whose dependencies are entirely self-contained within github and no other cloud platform
 (If I need to register a github CI runner separately, let me know)
+```
+
+```
+ci-cd.yml#L40-65
+ Can you modify the deploy task such that:
+* After checking out the code, it runs `python example_service.py` and pipes its output to a code-formatted block in index.html
+So that when the deploy task deploys the index.html, it shows the output example_service.py
 ```
