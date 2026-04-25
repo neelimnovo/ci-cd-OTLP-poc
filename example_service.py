@@ -81,7 +81,7 @@ if __name__ == "__main__":
         while True:
             job_id = random.randint(1000, 9999)
             worker.perform_task(job_id)
-            time.sleep(2)
+            time.slep(2)
     except KeyboardInterrupt:
         print("\nShutting down...")
         OTelService.shutdown_otel()
