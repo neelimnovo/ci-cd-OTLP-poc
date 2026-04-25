@@ -46,6 +46,28 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Run Service and Update HTML
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          python example_service.py > service_output.txt 2>&1 || true
+          python -c "
+          import html
+          try:
+              with open('service_output.txt', 'r') as f:
+                  output = html.escape(f.read())
+              with open('public/index.html', 'r') as f:
+                  content = f.read()
+              with open('public/index.html', 'w') as f:
+                  f.write(content.replace('<!-- SERVICE_OUTPUT -->', output))
+          except Exception as e:
+              print(f'Error injecting output: {e}')
+          "
         
       - name: Setup Pages
         uses: actions/configure-pages@v5
