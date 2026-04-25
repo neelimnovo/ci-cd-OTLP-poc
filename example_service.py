@@ -78,10 +78,10 @@ if __name__ == "__main__":
     print("Service started. Press Ctrl+C to stop.\n")
     worker = WorkerService()
     try:
-        while True:
-            job_id = random.randint(1000, 9999)
-            worker.perform_task(job_id)
-            time.slep(2)
+    while True:
+        job_id = random.randint(1000, 9999)
+        worker.perform_task(job_id)
+        time.sleep(2)
     except KeyboardInterrupt:
         print("\nShutting down...")
         OTelService.shutdown_otel()
