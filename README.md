@@ -3,12 +3,17 @@ This is a proof-of-concept project that demonstrates two things
 * A dummy python service that logs using OpenTelemetry Protocol (OTLP) to show the structure and content of the logged data.
 * Running a CI/CD pipeline where a CI test is run after every commit to the `main` branch. If the CI test passed, the a CD job is run which deploys a website to Github Pages.
 
+## Example OTLP Logging Service
+
 Requirements to run the service locally
 - Python 3.10+
 
 Steps to Run
 ```
 # Activate venv
+source .venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
 
 # Run script
@@ -128,6 +133,18 @@ data:
           processors: [attributes]
           exporters: [otlp]
 ```
+
+## CI/CD Example Pipeline
+
+The CI/CD pipeline is defined in the `.github/workflows/ci-cd.yml` file. It performs the following steps:
+1. CI: Runs a simple python compilation test on `example_service.py`. If it fails, the pipeline stops. If it passes, the pipeline continues to the CD stage.
+2. CD: Runs `python example_service.py` and pipes its output to a code-formatted block in `public/index.html`. It then deploys the `public` folder to GitHub Pages.
+
+You can check out the deployed website here:https://neelimnovo.github.io/ci-cd-OTLP-poc/
+
+Given more time, I would have liked to test out using GitHub Actions to run a CI/CD pipeline in EKS for deployment, as well as Terraform IaC to for the cloud infrastructure.
+
+## AI Usage Disclosure
 
 This was made mostly using the Antigravity IDE, using the Gemini 3.1 Pro and Flash models, with some minor editing to the code.
 
