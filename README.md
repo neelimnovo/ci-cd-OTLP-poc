@@ -147,6 +147,7 @@ Given more time, I would have liked to test out using GitHub Actions to run a CI
 ## AI Usage Disclosure
 
 This was made mostly using the Antigravity IDE, using the Gemini 3.1 Pro and Flash models, with some minor editing to the code.
+AI Code output was verified manually by looking for the results I was expecting for the CI/CD deployment and code output. For the OTel productionizing advice, I cross-checked the documentation for AWS ADOT.
 
 Main list of prompts used:
 
