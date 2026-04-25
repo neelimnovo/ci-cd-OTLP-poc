@@ -19,7 +19,7 @@ pip install -r requirements.txt
 # Run script
 python example_service.py
 ```
-Example OTel Event fired by this 
+Example an OTel Event fired by this 
 
 ```json
 {
@@ -54,7 +54,7 @@ Example OTel Event fired by this
 }
 ```
 
-Example of uncaught exception OTel Event, created by adding a typos
+Example of an uncaught exception OTel Event, created by adding a typo
 
 ```json
 {
